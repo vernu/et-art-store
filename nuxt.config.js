@@ -37,13 +37,13 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/vuetify
     '@nuxtjs/vuetify',
+    '@nuxtjs/firebase',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
-    '@nuxtjs/firebase',
   ],
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
@@ -65,7 +65,12 @@ export default {
       measurementId: 'G-NDK4FFZKMG',
     },
     services: {
-      auth: true // Just as example. Can be any other service.
+      auth: true,
+      firestore: true,
+      storage: true,
+      messaging: true,
+      analytics: true,
+      remoteConfig: true
     }
   },
 
