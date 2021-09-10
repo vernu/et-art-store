@@ -37,12 +37,29 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
+    '@nuxtjs/firebase',
   ],
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {
     manifest: {
       lang: 'en'
+    }
+  },
+
+  //firebase module config
+  firebase: {
+    config: {
+      apiKey: 'AIzaSyCw835Eta3rU6c-HFFkfBZDHbcvhszKnPs',
+      authDomain: 'et-art-store.firebaseapp.com',
+      projectId: 'et-art-store',
+      storageBucket: 'et-art-store.appspot.com',
+      messagingSenderId: '834177508544',
+      appId: '1:834177508544:web:b0043c3c8ea1b8dfabf925',
+      measurementId: 'G-NDK4FFZKMG',
+    },
+    services: {
+      auth: true // Just as example. Can be any other service.
     }
   },
 
