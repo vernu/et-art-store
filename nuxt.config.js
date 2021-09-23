@@ -37,13 +37,13 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/vuetify
     '@nuxtjs/vuetify',
-    '@nuxtjs/firebase',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
+    '@nuxtjs/firebase',
   ],
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
@@ -55,6 +55,7 @@ export default {
 
   //firebase module config
   firebase: {
+    lazy: false,
     config: {
       apiKey: 'AIzaSyCw835Eta3rU6c-HFFkfBZDHbcvhszKnPs',
       authDomain: 'et-art-store.firebaseapp.com',
