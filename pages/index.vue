@@ -20,7 +20,7 @@
           height="20px"
           striped
         ></v-progress-linear>
-        <v-row justify="content-between"
+        <v-row v-else justify="content-between"
           ><v-col v-for="(category, i) in categories" :key="i">
             <v-chip link to="" outlined color="primary">
               <v-card-title>{{ category.name }}</v-card-title></v-chip

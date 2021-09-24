@@ -16,7 +16,9 @@
             type="password"
             v-model="confirmPassword"
           ></v-text-field>
-          <v-btn v-on:click="signUpWithEmailAndPassword">Signup</v-btn>
+
+          <v-progress-circular indeterminate v-if="signupInProgress" />
+          <v-btn v-else v-on:click="signup">Signup</v-btn>
         </v-form>
 
         <div>Have an account? <nuxt-link to="/signin">Sign in</nuxt-link></div>
@@ -26,8 +28,14 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
 export default {
   name: "Signup",
+  computed: {
+    ...mapState({
+      signupInProgress: (state) => state.auth.signupInProgress,
+    }),
+  },
   data: () => {
     return {
       fullName: "",
@@ -37,17 +45,14 @@ export default {
     };
   },
   methods: {
-    async signUpWithEmailAndPassword() {
-      try {
-        await this.$fire.auth.createUserWithEmailAndPassword(
-          this.email,
-          this.password
-        );
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.$route.push("/");
-      }
+    ...mapActions({
+      signUpWithEmailAndPassword: "auth/signUpWithEmailAndPassword",
+    }),
+    async signup() {
+      this.signUpWithEmailAndPassword({
+        email: this.email,
+        password: this.password,
+      });
     },
   },
 };

@@ -11,7 +11,7 @@
             v-model="password"
           ></v-text-field>
           <v-progress-circular indeterminate v-if="signinInProgress" />
-          <v-btn v-else v-on:click="signInWithEmailAndPassword">Signin</v-btn>
+          <v-btn v-else v-on:click="signinWithEmailAndPassword">Signin</v-btn>
         </v-form>
 
         <div>
@@ -26,52 +26,29 @@
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapState } from "vuex";
 export default {
   name: "Signin",
   data: () => {
     return {
       email: "",
       password: "",
-      signinInProgress: false,
     };
   },
-  methods: {
-    async signinWithGoogle() {},
-    async signInAnonymously() {
-      try {
-        await this.$fire.auth.signInAnonymously();
-      } catch (e) {
-        console.log(e);
-      }
-    },
-    async signInWithEmailAndPassword() {
-      this.signinInProgress = true;
-      try {
-        const authRes = await this.$fire.auth.signInWithEmailAndPassword(
-          this.email,
-          this.password
-        );
-        console.log(authRes.user);
-        this.setCurrentUser(authRes.user);
-      } catch (e) {
-        console.log(e);
-      }
-
-      this.signinInProgress = false;
-    },
-
-    async signout() {
-      try {
-        await this.$fire.auth.signOut();
-      } catch (e) {
-        console.log(e);
-      }
-    },
-
-    ...mapMutations({
-      setCurrentUser: "auth/setCurrentUser",
+  computed: {
+    ...mapState({
+      currentUser: (state) => state.auth.currentUser,
+      signinInProgress: (state) => state.auth.signinInProgress,
     }),
+  },
+  methods: {
+    signinWithEmailAndPassword() {
+      this.$store.dispatch("auth/signinWithEmailAndPassword", {
+        email: this.email,
+        password: this.password,
+      });
+    },
+    async signinWithGoogle() {},
   },
 };
 </script>

@@ -11,7 +11,10 @@
         {{ item.title }}</v-btn
       >
       <v-spacer />
-      <v-btn link to="/signin" nuxt> Signin</v-btn>
+      <div v-if="currentUser">
+        {{ currentUser.email }} <v-btn v-on:click="signout"> Signout</v-btn>
+      </div>
+      <v-btn v-else link to="/signin" nuxt> Signin</v-btn>
     </v-app-bar>
     <v-main>
       <v-container>
@@ -20,14 +23,13 @@
     </v-main>
 
     <v-footer app>
-      <div v-if="currentUser">current user: {{ currentUser }}</div>
       <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
   </v-app>
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 export default {
   data() {
@@ -49,22 +51,17 @@ export default {
     };
   },
   computed: {
-    currentUser() {
-      return this.$store.state.auth.currentUser;
-    },
-  },
-  methods: {
-    ...mapMutations({
-      setCurrentUser: "auth/setCurrentUser",
+    ...mapState({
+      currentUser: (state) => state.auth.currentUser,
     }),
   },
-  // created() {
-  //   if (!this.$store.state.auth.currentUser) {
-  //     console.log(this.$fire.auth.currentUser);
-  //     if (this.$fire.auth.currentUser) {
-  //       this.setCurrentUser(this.$fire.auth.currentUser);
-  //     }
-  //   }
-  // },
+  methods: {
+    ...mapActions({
+      signout: "auth/signout",
+    }),
+  },
+  created() {
+    // this.$store.dispatch("auth/checkAuthStatus");
+  },
 };
 </script>
