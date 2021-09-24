@@ -66,7 +66,9 @@ export default {
         this.isSubmitting = true;
         const imageRef = this.$fire.storage
           .ref()
-          .child(`items/${timestamp}-${this.itemImage.name}`);
+          .child(
+            `items/${this.currentUser.id}/${timestamp}-${this.itemImage.name}`
+          );
         const snapshot = await imageRef.put(this.itemImage);
         const imageDownloadUrl = await snapshot.ref.getDownloadURL();
         this.imageUrl = imageDownloadUrl;
