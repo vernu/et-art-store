@@ -5,6 +5,14 @@
         <h2>Sell</h2>
 
         <v-form>
+          <v-select
+            :items="allCategories"
+            v-model="selectedCategory"
+            item-text="name"
+            item-value="id"
+            outlined
+            label="Select Category"
+          ></v-select>
           <v-text-field label="Item Name" v-model="itemName"></v-text-field>
           <v-text-field
             label="Price"
@@ -29,11 +37,19 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
+  computed: {
+    ...mapState({
+      currentUser: (state) => state.auth.currentUser,
+    }),
+  },
   data: () => {
     return {
+      allCategories: [],
+      selectedCategory: null,
       isSubmitting: false,
-      itemName: "",
+      itemName: null,
       price: null,
       itemImage: null,
       imageUrl: null,
@@ -41,12 +57,16 @@ export default {
   },
   methods: {
     async submit() {
-      const timestamp = new Date().getTime();
-      this.isSubmitting = true;
-      const imageRef = this.$fire.storage
-        .ref()
-        .child(`items/${timestamp}-${this.itemImage.name}`);
       try {
+        const category = this.allCategories.filter(
+          (categ) => categ.id == this.selectedCategory
+        )[0];
+
+        const timestamp = new Date().getTime();
+        this.isSubmitting = true;
+        const imageRef = this.$fire.storage
+          .ref()
+          .child(`items/${timestamp}-${this.itemImage.name}`);
         const snapshot = await imageRef.put(this.itemImage);
         const imageDownloadUrl = await snapshot.ref.getDownloadURL();
         this.imageUrl = imageDownloadUrl;
@@ -54,7 +74,10 @@ export default {
         await ref.set({
           name: this.itemName,
           price: parseInt(this.price),
+          categoryId: category.id,
+          categoryName: category.name,
           mainImage: this.imageUrl,
+          userId: this.currentUser.id,
         });
       } catch (e) {
         console.log(e);
@@ -63,6 +86,15 @@ export default {
         this.$router.push("/");
       }
     },
+  },
+  async created() {
+    const categories = [];
+    const ref = this.$fire.firestore.collection("categories");
+    const querySnapshot = await ref.get();
+    querySnapshot.forEach((doc) => {
+      categories.push({ ...doc.data(), id: doc.id });
+    });
+    this.allCategories = categories;
   },
 };
 </script>

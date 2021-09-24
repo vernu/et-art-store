@@ -10,7 +10,7 @@ export const actions = {
       ctx.commit("removeCurrentUser");
     } else {
       const { uid, email, phoneNumber } = authUser;
-      const currentUser = { uid, email, phoneNumber };
+      const currentUser = { id: uid, email, phoneNumber };
       ctx.commit("setCurrentUser", { currentUser });
     }
   },
