@@ -12,6 +12,14 @@
         <br />
         <br />
         <br />
+
+        <v-progress-linear
+          v-if="loadingCategories"
+          indeterminate
+          color="blue"
+          height="20px"
+          striped
+        ></v-progress-linear>
         <v-row justify="content-between"
           ><v-col v-for="(category, i) in categories" :key="i">
             <v-chip link to="" outlined color="primary">
@@ -21,7 +29,19 @@
         > </v-col
       ><v-col sm="12" md="6">
         <v-carousel continuous cycle interval="3000" vertical-delimiters>
-          <v-carousel-item v-for="(item, i) in featuredItems" :key="i">
+          <v-row v-if="loadingFeaturedItems" align-content="space-around">
+            <v-col><br /></v-col>
+            <v-col>
+              <v-progress-circular
+                :size="70"
+                :width="7"
+                color="blue"
+                indeterminate
+              ></v-progress-circular
+            ></v-col>
+          </v-row>
+
+          <v-carousel-item v-else v-for="(item, i) in featuredItems" :key="i">
             <v-img
               :src="item.mainImage"
               class="white--text align-end"
@@ -62,7 +82,13 @@
       </v-col>
     </v-row>
     <h2>Recently Added</h2>
-    <v-row>
+    <v-progress-linear
+      v-if="loadingRecentlyAddedItems"
+      indeterminate
+      color="blue"
+      height="20px"
+    ></v-progress-linear>
+    <v-row v-else>
       <v-col
         cols="12"
         sm="12"
@@ -102,53 +128,30 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
+  computed: {
+    ...mapState({
+      categories: (state) => state.home.categories,
+      loadingCategories: (state) => state.home.loadingCategories,
+      featuredItems: (state) => state.home.featuredItems,
+      loadingFeaturedItems: (state) => state.home.loadingFeaturedItems,
+      recentlyAddedItems: (state) => state.home.recentlyAddedItems,
+      loadingRecentlyAddedItems: (state) =>
+        state.home.loadingRecentlyAddedItems,
+    }),
+  },
   data: () => {
     return {
-      categories: [],
-      featuredItems: [],
-      recentlyAddedItems: [],
       popularSellers: [{ name: "isra el" }, { name: "vernu" }],
     };
   },
   async created() {
-    this.fetchCategories();
-    this.fetchFeaturedItems();
-    this.fetchRecentlyAddedItems();
+    this.$store.dispatch("home/fetchCategories");
+    this.$store.dispatch("home/fetchFeaturedItems");
+    this.$store.dispatch("home/fetchRecentlyAddedItems");
   },
 
-  methods: {
-    async fetchCategories() {
-      const categs = [];
-      const ref = this.$fire.firestore.collection("categories");
-      const querySnapshot = await ref.get();
-      querySnapshot.forEach((doc) => {
-        categs.push({ ...doc.data(), id: doc.id });
-      });
-      this.categories = categs;
-    },
-
-    async fetchFeaturedItems() {
-      const items = [];
-      const ref = this.$fire.firestore
-        .collection("items")
-        .where("isFeatured", "==", true);
-      const querySnapshot = await ref.get();
-      querySnapshot.forEach((doc) => {
-        items.push({ ...doc.data(), id: doc.id });
-      });
-      this.featuredItems = items;
-      console.log(items);
-    },
-    async fetchRecentlyAddedItems() {
-      const items = [];
-      const ref = this.$fire.firestore.collection("items");
-      const querySnapshot = await ref.get();
-      querySnapshot.forEach((doc) => {
-        items.push({ ...doc.data(), id: doc.id });
-      });
-      this.recentlyAddedItems = items;
-    },
-  },
+  methods: {},
 };
 </script>
