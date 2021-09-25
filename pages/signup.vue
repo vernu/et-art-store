@@ -4,7 +4,7 @@
       <v-col sm="12" md="4">
         <h2>Sign up</h2>
         <v-form>
-          <v-text-field label="Full Name" v-model="fullName"></v-text-field>
+          <v-text-field label="Full Name" v-model="name"></v-text-field>
           <v-text-field label="Email" v-model="email"></v-text-field>
           <v-text-field
             label="Password"
@@ -38,10 +38,10 @@ export default {
   },
   data: () => {
     return {
-      fullName: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
+      name: null,
+      email: null,
+      password: null,
+      confirmPassword: null,
     };
   },
   methods: {
@@ -50,6 +50,7 @@ export default {
     }),
     async signup() {
       this.signUpWithEmailAndPassword({
+        name: this.name,
         email: this.email,
         password: this.password,
       });

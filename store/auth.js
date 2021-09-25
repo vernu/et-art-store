@@ -34,13 +34,22 @@ export const actions = {
     commit("setSigninInProgress", { status: false });
   },
 
-  async signUpWithEmailAndPassword({ commit }, { email, password }) {
+  async signUpWithEmailAndPassword({ commit }, { name, email, password }) {
     try {
       commit("setSignupInProgress", { status: true });
       const authRes = await this.$fire.auth.createUserWithEmailAndPassword(
         email,
         password
       );
+      const newUserId = authRes.user.uid;
+      await this.$fire.firestore
+        .collection("users")
+        .doc(newUserId)
+        .set({
+          name,
+          email,
+          createdAt: this.$fireModule.firestore.Timestamp.now()
+        });
       this.$router.push("/");
     } catch (e) {
       console.log(e);
